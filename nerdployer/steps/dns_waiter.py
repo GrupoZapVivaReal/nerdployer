@@ -13,7 +13,7 @@ class DnsWaiterStep(BaseStep):
     def __init__(self, config):
         super().__init__('dns_waiter', config)
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         dns = params['dns']
         target = params['target']
         dns_type = utils.fallback([params['dns_type'], DEFAULT_DNS_TYPE])

@@ -8,7 +8,7 @@ class SlackStep(BaseStep):
     def __init__(self, config):
         super().__init__('slack', config)
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         webhook = utils.fallback([params['webhook'], self.config['webhook']])
         channel = utils.fallback([params['channel'], self.config['channel']])
         icon = utils.fallback([params['icon'], self.config['icon']])

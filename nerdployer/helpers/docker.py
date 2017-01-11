@@ -2,6 +2,8 @@ import logging
 import json
 from docker import Client
 
+logger = logging.getLogger(__name__)
+
 
 class Docker(object):
 
@@ -19,4 +21,4 @@ class Docker(object):
             except:
                 pass
 
-            logging.debug('%s --> %s', phase, output)
+            logger.debug('%s --> %s', phase, output)

@@ -7,7 +7,7 @@ class Route53Step(BaseStep):
     def __init__(self, config):
         super().__init__('route53', config)
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         client = Route53()
         operation = params['operation']
         if operation == 'create_or_update':

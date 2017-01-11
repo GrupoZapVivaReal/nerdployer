@@ -8,11 +8,11 @@ MAX_HEALTH_CHECK_ATTEMPTS = 20
 HEALTH_CHECK_WAIT_TIME = 15
 
 
-class ElbHealthyWaiterStep(BaseStep):
+class ElbHealthWaiterStep(BaseStep):
     def __init__(self, config):
-        super().__init__('elb_healthy_waiter', config)
+        super().__init__('elb_health_waiter', config)
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         region = utils.fallback([params['region'], self.config['region']])
         asg_client = boto3.client('autoscaling', region_name=region)
         elb_client = boto3.client('elb', region_name=region)

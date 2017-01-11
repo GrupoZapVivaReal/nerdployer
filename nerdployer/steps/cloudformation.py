@@ -8,16 +8,18 @@ class CloudformationStep(BaseStep):
     def __init__(self, config):
         super().__init__('cloudformation', config)
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         region = utils.fallback([params['region'], self.config['region']])
         client = Cloudformation(region)
         operation = params['operation']
         if operation == 'create_or_update':
+            template = utils.render_template(params['template'], context)
+            parameters = utils.render_template(params['parameters'], context)
             stack = client.get_stack(params['stack'])
             if not stack:
-                result = client.create_stack(params['stack'], params['template'], params['parameters'], params['tags'])
+                result = client.create_stack(params['stack'], template, parameters, params['tags'])
             else:
-                result = client.update_stack(params['stack'], params['template'], params['parameters'], params['tags'])
+                result = client.update_stack(params['stack'], template, parameters, params['tags'])
         elif operation == 'delete_stack':
             result = client.delete_stack(params['stack'])
         elif operation == 'list_stacks':

@@ -5,11 +5,14 @@ import nerdployer.helpers.utils as utils
 import logging
 
 
+logger = logging.getLogger(__name__)
+
+
 class OldStackCleanerStep(BaseStep):
     def __init__(self, config):
         super().__init__('old_stack_cleaner', config)
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         region = utils.fallback([params['region'], self.config['region']])
         client = Cloudformation(region)
 
@@ -19,5 +22,5 @@ class OldStackCleanerStep(BaseStep):
         stacks = client.list_stacks(common_tags)
         for stack in stacks:
             if current_stack != stack['StackName']:
-                logging.info('deleting stack: %s', stack['StackName'])
+                logger.info('deleting stack: %s', stack['StackName'])
                 client.delete(stack['StackName'])

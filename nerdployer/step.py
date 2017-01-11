@@ -7,13 +7,8 @@ class BaseStep(object):
         if type in config:
             self.config = defaultdict(lambda: None, config[self._type])
 
-    def execute(self, step_name, context, params):
+    def execute(self, context, params):
         raise NotImplementedError('please implement this method')
-
-    def run(self, step_name, context, params):
-        result = self.execute(step_name, context, params)
-        if result:
-            context[step_name] = result
 
     @property
     def config(self):

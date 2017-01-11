@@ -10,21 +10,38 @@
 			"region": "us-east-1"
 		}
 	},
-	"steps": [{
-		"name": "regions",
-		"type": "awscli",
-		"parameters": {
-			"service": "ec2",
-			"command": "describe-regions"
-		}
-	}, {
-		"name": "version",
-		"type": "git"
-	}, {
-		"name": "notify_version_and_region",
-		"type": "slack",
-		"parameters": {
-			"message": "*current repository version is:* `{{ version }}`. *the aws regions are:* `{{{ regions.Regions }}}`"
-		}
-	}]
+	"flow": {
+		"steps": [{
+			"name": "regions",
+			"type": "awscli",
+			"parameters": {
+				"service": "ec2",
+				"command": "describe-regions"
+			}
+		}, {
+			"name": "invalid_command",
+			"type": "awscli",
+			"ignore_errors": true,
+			"parameters": {
+				"service": "ec2",
+				"command": "not-existent-cmd"
+			}
+		}, {
+			"name": "version",
+			"type": "git"
+		}, {
+			"name": "notify_version_and_region",
+			"type": "slack",
+			"parameters": {
+				"message": "*current repository version is:* `{{ version }}`\n\n*the aws regions are:* `{{{ regions.Regions }}}`"
+			}
+		}],
+		"error": [{
+			"name": "notify_error",
+			"type": "slack",
+			"parameters": {
+				"message": "*an error occurred running step:* `{{ error.step }}`\n\n*error:* `{{{ error.exception }}}`"
+			}
+		}]
+	}
 }
