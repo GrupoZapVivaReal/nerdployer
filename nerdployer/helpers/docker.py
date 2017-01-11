@@ -19,4 +19,4 @@ class Docker(object):
             except:
                 pass
 
-            logging.info('%s --> %s', phase, output)
+            logging.debug('%s --> %s', phase, output)

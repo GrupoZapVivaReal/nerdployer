@@ -7,7 +7,7 @@ class DockerStep(BaseStep):
     def __init__(self, config):
         super().__init__('docker', config)
 
-    def process(self, step_name, context, params):
+    def execute(self, step_name, context, params):
         client = Docker()
         operation = params['operation']
         if operation == 'build_and_push':
@@ -15,4 +15,4 @@ class DockerStep(BaseStep):
         else:
             raise ValueError('invalid operation')
 
-        context[step_name] = result
+        return result

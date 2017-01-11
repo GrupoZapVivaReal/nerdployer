@@ -1,14 +1,16 @@
 
 from nerdployer.step import BaseStep
 from nerdployer.helpers.cloudformation import Cloudformation
+import nerdployer.helpers.utils as utils
 
 
 class CloudformationStep(BaseStep):
     def __init__(self, config):
         super().__init__('cloudformation', config)
 
-    def process(self, step_name, context, params):
-        client = Cloudformation(self.config['region'])
+    def execute(self, step_name, context, params):
+        region = utils.fallback([params['region'], self.config['region']])
+        client = Cloudformation(region)
         operation = params['operation']
         if operation == 'create_or_update':
             stack = client.get_stack(params['stack'])
@@ -23,9 +25,8 @@ class CloudformationStep(BaseStep):
         elif operation == 'get_stack_resources':
             result = client.get_stack_resources(params['stack'])
         elif operation == 'get_stack_resource':
-            result = client.get_stack_resource(
-                params['stack'], params['resource'])
+            result = client.get_stack_resource(params['stack'], params['resource'])
         else:
             raise ValueError('invalid operation')
 
-        context[step_name] = result
+        return result

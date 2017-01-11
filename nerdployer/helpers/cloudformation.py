@@ -19,6 +19,7 @@ class Cloudformation(object):
         except ClientError as e:
             if not (e.response['Error']['Code'] == 'ValidationError' and 'No updates are to be performed' in e.response['Error']['Message']):
                 raise(e)
+        return self.get(stack)
 
     def get_stack(self, stack):
         try:

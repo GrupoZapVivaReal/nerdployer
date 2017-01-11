@@ -7,6 +7,6 @@ class ShellStep(BaseStep):
     def __init__(self, config):
         super().__init__('shell', config)
 
-    def process(self, step_name, context, params):
+    def execute(self, step_name, context, params):
         ouput = subprocess.check_output(params['commands']).decode("utf-8").strip()
-        context[step_name] = ouput
+        return ouput

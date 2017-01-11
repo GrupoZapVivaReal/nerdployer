@@ -1,0 +1,8 @@
+__pycache__
+**/__pycache__
+*.pyc
+**/*.pyc
+nerdployer.egg-info
+setup.cfg
+build/
+temp/
