@@ -4,3 +4,4 @@ pystache
 dnspython
 requests
 awscli
+pyyaml

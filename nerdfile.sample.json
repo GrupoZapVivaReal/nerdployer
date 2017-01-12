@@ -36,7 +36,7 @@
 				"message": "*current repository version is:* `{{ version }}`\n\n*the aws regions are:* `{{{ regions.Regions }}}`"
 			}
 		}],
-		"error": [{
+		"recovery": [{
 			"name": "notify_error",
 			"type": "slack",
 			"parameters": {
