@@ -98,5 +98,4 @@ class NerdFlow():
             try:
                 return yaml.safe_load(content)
             except:
-                raise FlowException(
-                    'invalid nerdfile... please provide a valid yaml or json file')
+                raise FlowException('invalid nerdfile... please provide a valid yaml or json file')

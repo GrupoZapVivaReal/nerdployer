@@ -9,7 +9,7 @@ class CloudformationStep(BaseStep):
         super().__init__('cloudformation', config)
 
     def execute(self, context, params):
-        region = utils.fallback([params['region'], self.config['region']])
+        region = utils.fallback([params['region'], self.config['region'], 'us-east-1'])
         client = Cloudformation(region)
         operation = params['operation']
         if operation == 'create_or_update':

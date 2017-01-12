@@ -4,11 +4,9 @@ configuration:
     channel: "@cdmbr"
     icon: ":vbyte:"
     bot: nerdployer-test
-  awscli:
-    region: us-east-1
 flow:
   steps:
-  - name: regions
+  - name: aws_regions
     type: awscli
     parameters:
       service: ec2
@@ -19,14 +17,21 @@ flow:
     parameters:
       service: ec2
       command: not-existent-cmd
-  - name: version
+  - name: git_version
     type: git
+  - name: my_beautiful_slack_message
+    type: template
+    parameters:
+      content: |-
+        *current repository version is:* `[[git-revision]]`
+        *regions found:* `[[{regions}]]`
+      mappings:
+        git-revision: {{git_version}}
+        regions: {{{aws_regions.Regions}}}
   - name: notify_version_and_region
     type: slack
     parameters:
-      message: |-
-        *current repository version is:* `{{ version }}`
-        *the aws regions are:* `{{{ regions.Regions }}}`
+      message: {{{my_beautiful_slack_message}}}
   recovery:
   - name: notify_error
     type: slack
