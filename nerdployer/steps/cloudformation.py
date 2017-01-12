@@ -13,8 +13,8 @@ class CloudformationStep(BaseStep):
         client = Cloudformation(region)
         operation = params['operation']
         if operation == 'create_or_update':
-            template = utils.render_template(params['template'], context)
-            parameters = utils.render_template(params['parameters'], context)
+            template = utils.render_template(params['template'], params.get('mappings', context))
+            parameters = utils.parse_content(utils.render_template(params['parameters'], params.get('mappings', context)))
             stack = client.get_stack(params['stack'])
             if not stack:
                 result = client.create_stack(params['stack'], template, parameters, params['tags'])

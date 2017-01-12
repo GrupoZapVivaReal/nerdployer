@@ -9,7 +9,7 @@ import yaml
 from collections import defaultdict
 from nerdployer.exceptions import StepExecutionException, FlowException
 from nerdployer.step import BaseStep
-from nerdployer.helpers.utils import render_template
+from nerdployer.helpers.utils import render_template, parse_content
 
 CONFIGURATION_ENTRY = 'configuration'
 FLOW_ENTRY = 'flow'
@@ -93,9 +93,6 @@ class NerdFlow():
     def _load_nerdfile(self):
         content = render_template(self._nerdfile, self._context)
         try:
-            return json.loads(content)
+            return parse_content(content)
         except:
-            try:
-                return yaml.safe_load(content)
-            except:
-                raise FlowException('invalid nerdfile... please provide a valid yaml or json file')
+            raise FlowException('invalid nerdfile... please provide a valid yaml or json file')

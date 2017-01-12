@@ -10,7 +10,7 @@ class Cloudformation(object):
     def create_stack(self, stack, template, parameters, tags=[]):
         create_result = self._client.create_stack(StackName=stack, TemplateBody=template, Parameters=parameters, Tags=tags, Capabilities=['CAPABILITY_IAM'], OnFailure='DELETE')
         self._wait_for(create_result['StackId'], 'stack_create_complete')
-        return self.get(create_result['StackId'])
+        return self.get_stack(create_result['StackId'])
 
     def update_stack(self, stack, template, parameters, tags=[]):
         try:
@@ -19,7 +19,7 @@ class Cloudformation(object):
         except ClientError as e:
             if not (e.response['Error']['Code'] == 'ValidationError' and 'No updates are to be performed' in e.response['Error']['Message']):
                 raise(e)
-        return self.get(stack)
+        return self.get_stack(stack)
 
     def get_stack(self, stack):
         try:
