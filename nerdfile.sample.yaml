@@ -1,7 +1,7 @@
 configuration:
   slack:
-    webhook: ***REMOVED***
-    channel: "@cdmbr"
+    webhook: YOUR_SLACK_WEBHOOK_GOES_HERE
+    channel: "YOUR_SLACK_USER_GOES_HERE"
     icon: ":vbyte:"
     bot: nerdployer-test
 flow:

@@ -4,7 +4,7 @@ import os
 from nerdployer.flow import NerdFlow
 
 
-def run(file, context):
+def _run(file, context):
     flow = NerdFlow(file, context)
     flow.run()
 
@@ -21,7 +21,7 @@ def _initialize_context(pairs):
     return context
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='nerdployer tool')
     parser.add_argument('--nerdfile', default='nerdfile', help='nerdfile in yaml or json format')
     parser.add_argument('--context', nargs='*', help='initial nerdployer context in key=value format')
@@ -30,4 +30,8 @@ if __name__ == '__main__':
     if not os.path.exists(args.nerdfile):
         parser.error('please provide a nerdfile')
 
-    run(args.nerdfile, _initialize_context(args.context))
+    _run(args.nerdfile, _initialize_context(args.context))	
+
+
+if __name__ == '__main__':
+    main()

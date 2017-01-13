@@ -16,6 +16,7 @@ setup_options = dict(
     url='http://www.vivareal.com.br',
     scripts=['bin/nerdployer'],
     packages=find_packages(),
+    package_data={'nerdployer': ['steps/templates/*']},
     install_requires=requires,
     license="Apache License 2.0",
     classifiers=(
