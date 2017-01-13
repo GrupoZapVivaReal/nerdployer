@@ -5,6 +5,7 @@ import json
 import yaml
 
 DEFAULT_PYSTACHE_DELIMITER = pystache.defaults.DELIMITERS
+pystache.defaults.TAG_ESCAPE = lambda s : s.replace('\n', '\\n')
 
 
 def fallback(list):

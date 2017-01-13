@@ -16,11 +16,6 @@ class TemplateStep(BaseStep):
         mappings = params.get('mappings', context)
 
         if content:
-            result = utils.render_content(content, mappings, DEFAULT_CONTENT_DELIMITER)
+            return utils.render_content(content, mappings, DEFAULT_CONTENT_DELIMITER)
         else:
-            result = utils.render_template(file, mappings)
-
-        if params.get('escape', True):
-            return repr(result)
-        else:
-            return result
+            return utils.render_template(file, mappings)

@@ -1,44 +1,62 @@
 {
-	"configuration": {
-		"slack": {
-			"webhook": "***REMOVED***",
-			"channel": "@cdmbr",
-			"icon": ":vbyte:",
-			"bot": "nerdployer-test"
-		}
-	},
-	"flow": {
-		"steps": [{
-			"name": "regions",
-			"type": "awscli",
-			"parameters": {
-				"service": "ec2",
-				"command": "describe-regions"
-			}
-		}, {
-			"name": "invalid_command",
-			"type": "awscli",
-			"ignore_errors": true,
-			"parameters": {
-				"service": "ec2",
-				"command": "not-existent-cmd"
-			}
-		}, {
-			"name": "version",
-			"type": "git"
-		}, {
-			"name": "notify_version_and_region",
-			"type": "slack",
-			"parameters": {
-				"message": "*current repository version is:* `{{ version }}`\n\n*the aws regions are:* `{{{ regions.Regions }}}`"
-			}
-		}],
-		"recovery": [{
-			"name": "notify_error",
-			"type": "slack",
-			"parameters": {
-				"message": "*an error occurred running step:* `{{ error.step }}`\n\n*error:* `{{{ error.exception }}}`"
-			}
-		}]
-	}
+  "configuration": {
+    "slack": {
+      "webhook": "***REMOVED***",
+      "channel": "@cdmbr",
+      "icon": ":vbyte:",
+      "bot": "nerdployer-test"
+    }
+  },
+  "flow": {
+    "steps": [
+      {
+        "name": "aws_regions",
+        "type": "awscli",
+        "parameters": {
+          "service": "ec2",
+          "command": "describe-regions"
+        }
+      },
+      {
+        "name": "invalid_command",
+        "type": "awscli",
+        "ignore_errors": true,
+        "parameters": {
+          "service": "ec2",
+          "command": "not-existent-cmd"
+        }
+      },
+      {
+        "name": "git_version",
+        "type": "git"
+      },
+      {
+        "name": "my_beautiful_slack_message",
+        "type": "template",
+        "parameters": {
+          "content": "hi there, as you requested * the current repository version is:* `[[ git-revision ]]`\nalso, here is the *aws regions descriptions:* `[[ regions ]]`",
+          "mappings": {
+            "git-revision": "{{git_version}}",
+            "regions": "{{aws_regions}}"
+          }
+        }
+      },
+      {
+        "name": "notify_version_and_region",
+        "type": "slack",
+        "parameters": {
+          "message": "{{my_beautiful_slack_message}}"
+        }
+      }
+    ],
+    "recovery": [
+      {
+        "name": "notify_error",
+        "type": "slack",
+        "parameters": {
+          "message": "hi there *an error occurred running step:* `{{ error.step }}`\n*error:* `{{ error.exception }}`"
+        }
+      }
+    ]
+  }
 }

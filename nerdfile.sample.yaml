@@ -23,19 +23,19 @@ flow:
     type: template
     parameters:
       content: |-
-        *current repository version is:* `[[git-revision]]`
-        *regions found:* `[[{regions}]]`
+        hi there, as you requested * the current repository version is:* `[[ git-revision ]]`
+        also, here is the *aws regions descriptions:* `[[ regions ]]`
       mappings:
-        git-revision: {{git_version}}
-        regions: {{{aws_regions.Regions}}}
+        git-revision: {{ git_version }}
+        regions: {{ aws_regions }}
   - name: notify_version_and_region
     type: slack
     parameters:
-      message: {{{my_beautiful_slack_message}}}
+      message: "{{ my_beautiful_slack_message }}"
   recovery:
   - name: notify_error
     type: slack
     parameters:
       message: |-
-        *an error occurred running step:* `{{ error.step }}`
-        *error:* `{{{ error.exception }}}`
+        hi there *an error occurred running step:* `{{ error.step }}`
+        *error:* `{{ error.exception }}`

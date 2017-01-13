@@ -42,6 +42,7 @@ Parameters:
   ELBSubnetIDListParam:
     Type: List<AWS::EC2::Subnet::Id>
     Description: List of subnet ids for the elb layer
+    Default: ''
   
   AppSubnetIDListParam:
     Type: List<AWS::EC2::Subnet::Id>
@@ -101,7 +102,7 @@ Parameters:
   
   DockerAMIParam:
     Type: AWS::EC2::Image::Id
-    Description: Docker ami with proper credentials that will be used
+    Description: Ubuntu docker ami with proper credentials that will be used
   
   DockerImageParam:
     Type: String
@@ -168,6 +169,11 @@ Parameters:
     Type: String
     Description: hosted zone id
     Default: 'nerdployer-test'
+
+  RollingUpdateMaxBatchSizeParam:
+    Type: Number
+    Description: max batch size for autoscaling rolling updates
+    Default: 1
 
 Conditions:
   ApiCondition:
@@ -387,7 +393,8 @@ Resources:
       AutoScalingRollingUpdate:
         MinInstancesInService:
           Ref: MinInstancesParam
-        MaxBatchSize: 1
+        MaxBatchSize:
+          Ref: RollingUpdateMaxBatchSizeParam
         PauseTime: PT15M
         WaitOnResourceSignals: 'true'
     Properties:
@@ -459,10 +466,8 @@ Resources:
           files:
             "/opt/docker/env.file":
               content:
-                Fn::Base64:
-                  Ref: DockerEnvironmentVariablesParam
+                Ref: DockerEnvironmentVariablesParam
               user: root
-              encoding: base64
               group: root
               mode: '664'
           commands:
@@ -492,7 +497,7 @@ Resources:
         Fn::Base64:
           Fn::Sub: |
             #!/bin/bash -xe
-            echo "forcing resource replace if changes ${DockerMaxSizeLogParam} ${DockerMaxFileLogParam} ${DockerImageParam} ${DockerPortParam}"
+            echo "starting: ${DockerImageParam} ${DockerPortParam}"
             cfn-init -v --stack ${AWS::StackName} --resource AppLaunchConfiguration --configsets all --region ${AWS::Region}
             cfn-signal -e $? --stack ${AWS::StackName} --resource AppAutoScalingGroup --region ${AWS::Region}
 
