@@ -23,8 +23,8 @@ flow:
     type: template
     parameters:
       content: |-
-        hi there, as you requested * the current repository version is:* `[[ git-revision ]]`
-        also, here is the *aws regions descriptions:* `[[ regions ]]`
+        hi there, as you requested *the current repository version is:* `[[ git-revision ]]`
+        also, here is the *awscli command result that you executed:* `[[ regions ]]`
       mappings:
         git-revision: {{ git_version }}
         regions: {{ aws_regions }}
@@ -37,5 +37,5 @@ flow:
     type: slack
     parameters:
       message: |-
-        hi there *an error occurred running step:* `{{ error.step }}`
-        *error:* `{{ error.exception }}`
+        an error occurred running step: `{{ error.step }}` :(
+        error: `{{ error.exception }}`

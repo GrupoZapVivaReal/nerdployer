@@ -12,7 +12,6 @@ class TemplateStep(BaseStep):
     def execute(self, context, params):
         content = params['content']
         file = params['file']
-
         mappings = params.get('mappings', context)
 
         if content:

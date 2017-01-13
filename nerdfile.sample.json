@@ -34,7 +34,7 @@
         "name": "my_beautiful_slack_message",
         "type": "template",
         "parameters": {
-          "content": "hi there, as you requested * the current repository version is:* `[[ git-revision ]]`\nalso, here is the *aws regions descriptions:* `[[ regions ]]`",
+          "content": "hi there, as you requested * the current repository version is:* `[[ git-revision ]]`\nalso, here is the *awscli command result that you executed:* `[[ regions ]]`",
           "mappings": {
             "git-revision": "{{git_version}}",
             "regions": "{{aws_regions}}"
@@ -54,7 +54,7 @@
         "name": "notify_error",
         "type": "slack",
         "parameters": {
-          "message": "hi there *an error occurred running step:* `{{ error.step }}`\n*error:* `{{ error.exception }}`"
+          "message": "an error occurred running step: `{{ error.step }}` :( \nerror: `{{ error.exception }}`"
         }
       }
     ]

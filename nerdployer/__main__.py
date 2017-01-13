@@ -1,16 +1,33 @@
 
-import sys
+import argparse
+import os
 from nerdployer.flow import NerdFlow
-import nerdployer.helpers.bootstrap as bootstrap
 
 
-def run(file):
-    initial_context = {}
-    flow = NerdFlow(file, initial_context)
+def run(file, context):
+    flow = NerdFlow(file, context)
     flow.run()
-    return 0
+
+
+def _initialize_context(pairs):
+    context = {}
+    if pairs:
+        for pair in pairs:
+            k, v = pair.split('=')
+            try:
+                context[k] = eval(v)
+            except NameError:
+                context[k] = v
+    return context
 
 
 if __name__ == '__main__':
-    bootstrap.run()
-    run(sys.argv[1])
+    parser = argparse.ArgumentParser(description='nerdployer tool')
+    parser.add_argument('--nerdfile', default='nerdfile', help='nerdfile in yaml or json format')
+    parser.add_argument('--context', nargs='*', help='initial nerdployer context in key=value format')
+    args = parser.parse_args()
+
+    if not os.path.exists(args.nerdfile):
+        parser.error('please provide a nerdfile')
+
+    run(args.nerdfile, _initialize_context(args.context))
