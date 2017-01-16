@@ -546,4 +546,4 @@ Resources:
           - AppLoadBalancer
           - DNSName
 
-Description: Nerdployer Docker Application Stack Template
+Description: Nerdployer Docker Application Template

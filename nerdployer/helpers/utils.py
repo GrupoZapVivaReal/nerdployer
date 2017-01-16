@@ -3,9 +3,10 @@ import pystache
 import pystache.defaults
 import json
 import yaml
+from collections import defaultdict
 
 DEFAULT_PYSTACHE_DELIMITER = pystache.defaults.DELIMITERS
-pystache.defaults.TAG_ESCAPE = lambda s : s.replace('\n', '\\n')
+pystache.defaults.TAG_ESCAPE = lambda s: s.replace('\n', '\\n')
 
 
 def fallback(list):
@@ -32,3 +33,7 @@ def parse_content(content):
             return yaml.safe_load(content)
         except:
             raise ValueError('could not parse the content as an valid yaml or json')
+
+
+def safe_dict(current_dict):
+    return defaultdict(lambda: None, current_dict)

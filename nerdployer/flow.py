@@ -3,13 +3,10 @@ import os
 import re
 import importlib
 import inspect
-import json
 import logging
-import yaml
-from collections import defaultdict
 from nerdployer.exceptions import StepExecutionException, FlowException
 from nerdployer.step import BaseStep
-from nerdployer.helpers.utils import render_template, parse_content
+from nerdployer.helpers.utils import render_template, parse_content, safe_dict
 
 CONFIGURATION_ENTRY = 'configuration'
 FLOW_ENTRY = 'flow'
@@ -56,7 +53,7 @@ class NerdFlow():
     def _run_step_executor(self, all_steps_executors, step_definition):
         step_executor = self._get_step_executor(all_steps_executors, step_definition['type'])
         logger.info('running step: %s', step_definition['name'])
-        result = step_executor.execute(self._context, defaultdict(lambda: None, step_definition.get('parameters', {})))
+        result = step_executor.execute(self._context, safe_dict(step_definition.get('parameters', {})))
         logger.info('done running step: %s', step_definition['name'])
         return result
 
@@ -85,9 +82,9 @@ class NerdFlow():
 
     def _get_configuration_and_steps(self):
         nerdfile = self._load_nerdfile()
-        configuration = nerdfile[CONFIGURATION_ENTRY]
-        main_step_names = [step['name']for step in nerdfile[FLOW_ENTRY][STEPS_DEFINITIONS_ENTRY]]
-        error_step_names = [step['name'] for step in nerdfile[FLOW_ENTRY][RECOVERY_STEPS_DEFINITIONS_ENTRY]]
+        configuration = nerdfile.get(CONFIGURATION_ENTRY, {})
+        main_step_names = [step['name'] for step in nerdfile.get(FLOW_ENTRY, {}).get(STEPS_DEFINITIONS_ENTRY, [])]
+        error_step_names = [step['name'] for step in nerdfile.get(FLOW_ENTRY, {}).get(RECOVERY_STEPS_DEFINITIONS_ENTRY,[])]
         return configuration, main_step_names, error_step_names
 
     def _load_nerdfile(self):

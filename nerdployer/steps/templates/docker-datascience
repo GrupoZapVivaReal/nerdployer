@@ -101,10 +101,6 @@ Parameters:
     - hs1.8xlarge
     ConstraintDescription: must be a valid EC2 instance type
   
-  DockerAMIParam:
-    Type: AWS::EC2::Image::Id
-    Description: Ubuntu docker ami with proper credentials that will be used
-  
   DockerImageParam:
     Type: String
     Description: Docker image that will be pulled
@@ -171,6 +167,13 @@ Parameters:
     Description: max batch size for autoscaling rolling updates
     Default: 1
 
+Mappings:
+  RegionAmiMap:
+    sa-east-1:
+      ami: ami-15029879
+    us-east-1:
+      ami: ami-e86b84fe
+
 Conditions:
   ApiCondition:
     Fn::Equals:
@@ -206,6 +209,7 @@ Resources:
             - ec2:*
             - sqs:*
             - sns:*
+            - elasticloadbalancing:*
             - elasticmapreduce:*
             - iam:CreateRole
             - iam:PutRolePolicy
@@ -513,17 +517,19 @@ Resources:
                   --log-opt max-size=${DockerMaxSizeLogParam}
                   --log-opt max-file=${DockerMaxFileLogParam}
                   -p 8080:${DockerPortParam} ${DockerImageParam}
-            02waitforelb:
+            02elbcheckup:
               command:
                 Fn::Sub: >
-                  docker run -d --env-file=/opt/docker/env.file
-                  --network=host
-                  --log-opt max-size=${DockerMaxSizeLogParam}
-                  --log-opt max-file=${DockerMaxFileLogParam}
-                  -p 8080:${DockerPortParam} ${DockerImageParam}
+                  until [ "$state" == "\"InService\"" ]; do
+                    state=$(/usr/local/bin/aws elb describe-instance-health --load-balancer-name ${AppLoadBalancer} --region ${AWS::Region} --instances $(/usr/bin/curl -s http://169.254.169.254/latest/meta-data/instance-id) --query InstanceStates[0].State);
+                    sleep 10;
+                  done
+              test:
+                Fn::Sub: >
+                  test "${ProcessParam}" == "api"
     Properties:
-      ImageId:
-        Ref: DockerAMIParam
+      ImageId: 
+        Fn::FindInMap: [ RegionAmiMap, !Ref "AWS::Region", ami ]
       KeyName:
         Ref: KeyPairNameParam
       SecurityGroups:
@@ -536,7 +542,7 @@ Resources:
         Fn::Base64:
           Fn::Sub: |
             #!/bin/bash -xe
-            echo "starting: ${DockerImageParam} ${DockerPortParam}"
+            echo "running: ${DockerImageParam} ${DockerPortParam}"
             cfn-init -v --stack ${AWS::StackName} --resource AppLaunchConfiguration --configsets all --region ${AWS::Region}
             cfn-signal -e $? --stack ${AWS::StackName} --resource AppAutoScalingGroup --region ${AWS::Region}
 
@@ -585,4 +591,4 @@ Resources:
           - AppLoadBalancer
           - DNSName
 
-Description: Nerdployer Docker DataScience Enhanced Application Stack Template
+Description: Nerdployer Docker Datascience Application Template
