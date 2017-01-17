@@ -23,7 +23,7 @@ def _initialize_context(pairs):
 
 def main():
     parser = argparse.ArgumentParser(description='nerdployer tool')
-    parser.add_argument('--nerdfile', default='nerdfile', help='nerdfile in yaml or json format')
+    parser.add_argument('--nerdfile', default='.nerdfile', help='nerdfile in yaml or json format')
     parser.add_argument('--context', nargs='*', help='initial nerdployer context in key=value format')
     args = parser.parse_args()
 

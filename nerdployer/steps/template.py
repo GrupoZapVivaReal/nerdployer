@@ -2,7 +2,8 @@
 from nerdployer.step import BaseStep
 import nerdployer.helpers.utils as utils
 
-DEFAULT_CONTENT_DELIMITER = ('[[', ']]')
+START_DELIMITER = '[['
+END_DELIMITER = ']]'
 
 
 class TemplateStep(BaseStep):
@@ -15,6 +16,6 @@ class TemplateStep(BaseStep):
         mappings = params.get('mappings', context)
 
         if content:
-            return utils.render_content(content, mappings, DEFAULT_CONTENT_DELIMITER)
+            return utils.render_content(content, mappings, START_DELIMITER, END_DELIMITER)
         else:
             return utils.render_template(file, mappings)

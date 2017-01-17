@@ -21,6 +21,8 @@ class CloudformationStep(BaseStep):
             result = client.delete_stack(stack)
         elif operation == 'list_stacks':
             result = client.list_stacks(params['tags'])
+        elif operation == 'get_stack':
+            result = client.get_stack(stack)
         elif operation == 'get_stack_resources':
             result = client.get_stack_resources(stack)
         elif operation == 'get_stack_resource':

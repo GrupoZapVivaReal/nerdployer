@@ -10,8 +10,7 @@ from nerdployer.helpers.utils import render_template, parse_content, safe_dict
 
 CONFIGURATION_ENTRY = 'configuration'
 FLOW_ENTRY = 'flow'
-STEPS_DEFINITIONS_ENTRY = 'steps'
-RECOVERY_STEPS_DEFINITIONS_ENTRY = 'recovery'
+FAILURE_ENTRY = 'failure'
 ERROR_CONTEXT_ENTRY = 'error'
 
 logger = logging.getLogger(__name__)
@@ -27,10 +26,10 @@ class NerdFlow():
         all_steps_executors = self._load_steps_executors(configuration)
         logger.info('running flow... found: %s steps', len(main_step_names))
         try:
-            self._run_steps_flow(all_steps_executors, main_step_names, STEPS_DEFINITIONS_ENTRY)
+            self._run_steps_flow(all_steps_executors, main_step_names, FLOW_ENTRY)
         except StepExecutionException as e:
             self._populate_context(ERROR_CONTEXT_ENTRY, {'step': e.step, 'exception': e.message})
-            self._run_steps_flow(all_steps_executors, error_step_names, RECOVERY_STEPS_DEFINITIONS_ENTRY)
+            self._run_steps_flow(all_steps_executors, error_step_names, FAILURE_ENTRY)
             raise e
         logger.info('done running flow...')
 
@@ -76,16 +75,16 @@ class NerdFlow():
     def _get_step_executor(self, step_executors, type):
         return [step for step in step_executors if step.type == type][0]
 
-    def _get_step_definition(self, step_name, entry_type=STEPS_DEFINITIONS_ENTRY):
+    def _get_step_definition(self, step_name, entry_type):
         nerdfile = self._load_nerdfile()
-        return [step for step in nerdfile[FLOW_ENTRY][entry_type] if step['name'] == step_name][0]
+        return [step for step in nerdfile[entry_type] if step['name'] == step_name][0]
 
     def _get_configuration_and_steps(self):
         nerdfile = self._load_nerdfile()
         configuration = nerdfile.get(CONFIGURATION_ENTRY, {})
-        main_step_names = [step['name'] for step in nerdfile.get(FLOW_ENTRY, {}).get(STEPS_DEFINITIONS_ENTRY, [])]
-        error_step_names = [step['name'] for step in nerdfile.get(FLOW_ENTRY, {}).get(RECOVERY_STEPS_DEFINITIONS_ENTRY,[])]
-        return configuration, main_step_names, error_step_names
+        flow_steps = [step['name'] for step in nerdfile.get(FLOW_ENTRY, [])]
+        failure_steps = [step['name'] for step in nerdfile.get(FAILURE_ENTRY, [])]
+        return configuration, flow_steps, failure_steps
 
     def _load_nerdfile(self):
         content = render_template(self._nerdfile, self._context)

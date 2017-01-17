@@ -11,7 +11,7 @@ class DockerStep(BaseStep):
         client = Docker()
         operation = params['operation']
         if operation == 'build_and_push':
-            result = client.build_and_push(params['respository'], params['tag'], params['path'])
+            result = client.build_and_push(params['repository'], params['tag'], params['path'])
         else:
             raise ValueError('invalid operation')
 

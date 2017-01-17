@@ -1,28 +1,27 @@
 
-import pystache
-import pystache.defaults
+from jinja2 import Environment, Undefined
 import json
 import yaml
 from collections import defaultdict
 
-DEFAULT_PYSTACHE_DELIMITER = pystache.defaults.DELIMITERS
-pystache.defaults.TAG_ESCAPE = lambda s: s.replace('\n', '\\n')
+
+class SilentUndefined(Undefined):
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ''
 
 
 def fallback(list):
     return next((item for item in list if item), None)
 
 
-def render_template(file, params, delimiters=DEFAULT_PYSTACHE_DELIMITER):
+def render_template(file, params):
     with open(file) as f:
-        return render_content(f.read(), params, delimiters)
+        return render_content(f.read(), params)
 
 
-def render_content(content, params, delimiters=DEFAULT_PYSTACHE_DELIMITER):
-    pystache.defaults.DELIMITERS = delimiters
-    rendered = pystache.render(content, params)
-    pystache.defaults.DELIMITERS = DEFAULT_PYSTACHE_DELIMITER
-    return rendered
+def render_content(content, params, start_delimiter='{{', end_delimiter='}}'):
+    template = Environment(undefined=SilentUndefined, variable_start_string=start_delimiter, variable_end_string=end_delimiter).from_string(content)
+    return template.render(params)
 
 
 def parse_content(content):
