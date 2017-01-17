@@ -3,14 +3,19 @@ N.e.r.d.p.l.o.y.e.r
 
 The ultimate datascience deployment tool
 
-## Running (easy way)
+## Running
+
+### Easy way 
+
+First create an alias that will automagically pull the nerdployer docker image and run it. 
 
 ```alias nerdployer="docker run --rm -v ${PWD}:/workspace -v ${HOME}/.aws/:/root/.aws/ -v ${HOME}/.docker/:/root/.docker/ -w /workspace vivareal/nerdployer:latest"```
 
-```nerdployer --nerdfile mydeployment --context somevar1=somevalue1 somevar2=somevalue2```
+```nerdployer --nerdfile my_nerdfile --context somevar1=somevalue1 somevar2=somevalue2```
 
+* some of the supported steps maybe not work properly using the docker image.
 
-## Running (hard way)
+### Hard way
 
 checkout the current repository and execute:
 
@@ -49,7 +54,7 @@ and run:
 
 ## How it works
 
-At the startup, nerdployer engine looks for a YAML or a JSON file (a.k.a. *nerdfile*) with the deployment flow described and creates an *empty context. The nerdfile is a simple template file that is rendered after each step execution by a jinja2 engine. At each step executed, the result is persisted in the context for possible use.
+At the startup, nerdployer engine looks for a YAML or a JSON file (a.k.a. *nerdfile*) with the deployment flow described and creates an *empty context. The nerdfile is a simple template file that is rendered after each step execution by a jinja2 engine. At each step executed, the result is persisted in the context for a future use.
 
 *you can setup the initial context variables when you fire the nerdployer tool with the context argument
 
@@ -74,7 +79,7 @@ The second section is named *flow* where you can configure your deployment flow 
 
 #### Failure Section
 
-The third and last section is called **failure**. It follows the same scheme of the *flow* section (can have multiple steps), but is invoked only when a exception occurs and can access a special context variable named **error**.
+The third and last section is called **failure**. It follows the same scheme of the *flow* section (can have multiple steps), but is invoked only when a exception occurs. Here you can access a special context variable named **error**.
 
 
 Have fun :)
