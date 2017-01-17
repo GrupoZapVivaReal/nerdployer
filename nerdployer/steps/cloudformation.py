@@ -34,7 +34,7 @@ class CloudformationStep(BaseStep):
 
     def _create_or_update_stack_action(self, client, stack, context, params):
         template_definition = params['template']
-        if template_definition['provided']:
+        if 'provided' in template_definition:
             template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'templates', template_definition['provided'])
         else:
             template_path = template_definition['external']

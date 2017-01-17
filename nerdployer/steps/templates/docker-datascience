@@ -498,7 +498,10 @@ Resources:
     Metadata:
       AWS::CloudFormation::Init:
         configSets:
-          all:
+          api:
+          - docker
+          - healthcheck
+          worker:
           - docker
         docker:
           files:
@@ -517,16 +520,27 @@ Resources:
                   --log-opt max-size=${DockerMaxSizeLogParam}
                   --log-opt max-file=${DockerMaxFileLogParam}
                   -p 8080:${DockerPortParam} ${DockerImageParam}
-            02elbcheckup:
-              command:
-                Fn::Sub: >
-                  until [ "$state" == "\"InService\"" ]; do
-                    state=$(/usr/local/bin/aws elb describe-instance-health --load-balancer-name ${AppLoadBalancer} --region ${AWS::Region} --instances $(/usr/bin/curl -s http://169.254.169.254/latest/meta-data/instance-id) --query InstanceStates[0].State);
-                    sleep 10;
-                  done
-              test:
-                Fn::Sub: >
-                  test "${ProcessParam}" == "api"
+        healthcheck:
+          files:
+            "/opt/docker/healthcheck":
+              content:
+                Fn::If:
+                - ApiCondition
+                - Fn::Sub: |
+                    #!/bin/bash -xe
+                    state="\"UnknownStatus\""
+                    instance_id=$(/usr/bin/curl -s http://169.254.169.254/latest/meta-data/instance-id)
+                    until [ "$state" == "\"InService\"" ]; do
+                      state=$(/usr/local/bin/aws elb describe-instance-health --load-balancer-name ${AppLoadBalancer} --region ${AWS::Region} --instances $instance_id --query InstanceStates[0].State);
+                      sleep 10;
+                    done
+                - Ref: "AWS::NoValue"
+              user: root
+              group: root
+              mode: '770'               
+          commands:
+            01healthcheck:
+              command: "/opt/docker/healthcheck"
     Properties:
       ImageId: 
         Fn::FindInMap: [ RegionAmiMap, !Ref "AWS::Region", ami ]
@@ -543,7 +557,7 @@ Resources:
           Fn::Sub: |
             #!/bin/bash -xe
             echo "running: ${DockerImageParam} ${DockerPortParam}"
-            cfn-init -v --stack ${AWS::StackName} --resource AppLaunchConfiguration --configsets all --region ${AWS::Region}
+            cfn-init -v --stack ${AWS::StackName} --resource AppLaunchConfiguration --configsets ${ProcessParam} --region ${AWS::Region}
             cfn-signal -e $? --stack ${AWS::StackName} --resource AppAutoScalingGroup --region ${AWS::Region}
 
   AppAutoScalingGroupScheduleUp:
