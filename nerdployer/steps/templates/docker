@@ -163,7 +163,7 @@ Parameters:
   HostedZoneNameParam:
     Type: String
     Description: hosted zone name
-    Default: vivareal.com.
+    Default: vivareal.io.
 
   ApiDnsParam:
     Type: String
@@ -546,4 +546,4 @@ Resources:
           - AppLoadBalancer
           - DNSName
 
-Description: Nerdployer Docker Application Template
+Description: Nerdployer Docker Stack
