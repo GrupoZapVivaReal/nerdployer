@@ -397,6 +397,8 @@ Resources:
           Ref: RollingUpdateMaxBatchSizeParam
         PauseTime: PT15M
         WaitOnResourceSignals: 'true'
+        SuspendProcesses:
+        - ScheduledActions
     Properties:
       LoadBalancerNames:
         Fn::If:
