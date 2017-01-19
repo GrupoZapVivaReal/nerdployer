@@ -6,6 +6,10 @@ dependencies:
  override:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD
 
+test:
+  override:
+    - echo "test"
+
 deployment:
   production:
    branch: master
