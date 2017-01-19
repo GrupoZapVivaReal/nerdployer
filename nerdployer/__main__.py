@@ -13,10 +13,10 @@ def _initialize_context(pairs):
     context = {}
     if pairs:
         for pair in pairs:
-            k, v = pair.split('=')
+            k, v = pair.split('=', 1)
             try:
                 context[k] = eval(v)
-            except NameError:
+            except:
                 context[k] = v
     return context
 

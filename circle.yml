@@ -1,0 +1,16 @@
+machine:
+ services:
+   - docker
+
+dependencies:
+ override:
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+deployment:
+  production:
+   branch: master
+   commands:
+      - docker build -t vivareal/nerdployer:$CIRCLE_SHA1 .
+      - docker tag vivareal/nerdployer:$CIRCLE_SHA1 vivareal/nerdployer:latest
+      - docker push vivareal/nerdployer:$CIRCLE_SHA1
+      - docker push vivareal/nerdployer:latest
