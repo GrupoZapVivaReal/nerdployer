@@ -145,12 +145,12 @@ Parameters:
   AutoScalingGroupScheduleUpParam:
     Type: String
     Description: cron expression to scale up the resources
-    Default: 0 8 * * 1-5
+    Default: 0 10 * * 1-5
   
   AutoScalingGroupScheduleDownParam:
     Type: String
     Description: cron expression to scale down the resources
-    Default: 0 0 * * 1-5
+    Default: 0 0 * * *
 
   AutoScalingGroupScheduledActionEnabledParam:
     Type: String
