@@ -49,12 +49,12 @@ Parameters:
     Description: List of subnet ids for the app layer
  
   MinInstancesParam:
-    Description: Min allocated instances for this application
+    Description: Minimum initial allocated instances for this application (permanent if not scheduled action is disabled)
     Type: Number
     Default: 1
   
   MaxInstancesParam:
-    Description: Max allocated instances for this application
+    Description: Maximum initial allocated instances for this application (permanent if not scheduled action is disabled)
     Type: Number
     Default: 2
   
@@ -107,7 +107,7 @@ Parameters:
   DockerEnvironmentVariablesParam:
     Type: String
     Description: Additional docker environment variables
-    Default: ''
+    Default: '#my docker env file content'
   
   KeyPairNameParam:
     Type: AWS::EC2::KeyPair::KeyName
@@ -166,6 +166,31 @@ Parameters:
     Description: max batch size for autoscaling rolling updates
     Default: 1
 
+  SpotBidPriceParam:
+    Type: String
+    Description: Optional spot instance bid price for AutoScaling EC2 (if UseSpotParam is enabled)
+    Default: ''
+
+  MinInstancesAutoScalingUpParam:
+    Description: Min allocated instances in AutoScalingUp if scheduled
+    Type: Number
+    Default: 0
+
+  MaxInstancesAutoScalingUpParam:
+    Description: Max allocated instances in AutoScalingUp if scheduled
+    Type: Number
+    Default: 0
+
+  MinInstancesAutoScalingDownParam:
+    Description: Min allocated instances in AutoScalingDown if scheduled
+    Type: Number
+    Default: 0
+
+  MaxInstancesAutoScalingDownParam:
+    Description: Max allocated instances in AutoScalingDown if scheduled
+    Type: Number
+    Default: 0
+
 Mappings:
   RegionAmiMap:
     sa-east-1:
@@ -178,7 +203,12 @@ Conditions:
     Fn::Equals:
     - api
     - Ref: ProcessParam
-  ScheduledActionConditionParam:
+  UseSpotCondition:
+    Fn::Not:
+    - Fn::Equals:
+      - ''
+      - Ref: SpotBidPriceParam
+  ScheduledActionCondition:
     Fn::Not:
     - Fn::Equals:
       - 'false'
@@ -547,6 +577,8 @@ Resources:
         Fn::FindInMap: [ RegionAmiMap, !Ref "AWS::Region", ami ]
       KeyName:
         Ref: KeyPairNameParam
+      SpotPrice:
+        !If [ UseSpotCondition, !Ref SpotBidPriceParam, !Ref "AWS::NoValue" ]
       SecurityGroups:
       - Ref: AppSecurityGroup
       InstanceType:
@@ -563,25 +595,27 @@ Resources:
 
   AppAutoScalingGroupScheduleUp:
     Type: AWS::AutoScaling::ScheduledAction
-    Condition: ScheduledActionConditionParam
+    Condition: ScheduledActionCondition
     Properties:
       AutoScalingGroupName:
         Ref: AppAutoScalingGroup
       MaxSize:
-        Ref: MaxInstancesParam
+        !Ref MaxInstancesAutoScalingUpParam
       MinSize:
-        Ref: MinInstancesParam
+        !Ref MinInstancesAutoScalingUpParam
       Recurrence:
         Ref: AutoScalingGroupScheduleUpParam
   
   AppAutoScalingGroupScheduleDown:
     Type: AWS::AutoScaling::ScheduledAction
-    Condition: ScheduledActionConditionParam
+    Condition: ScheduledActionCondition
     Properties:
       AutoScalingGroupName:
         Ref: AppAutoScalingGroup
-      MaxSize: 0
-      MinSize: 0
+      MaxSize:
+        !Ref MaxInstancesAutoScalingDownParam
+      MinSize:
+        !Ref MinInstancesAutoScalingDownParam
       Recurrence:
         Ref: AutoScalingGroupScheduleDownParam
 
