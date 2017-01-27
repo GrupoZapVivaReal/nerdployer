@@ -161,11 +161,6 @@ Parameters:
     Description: hosted zone id
     Default: 'nerdployer-test'
 
-  RollingUpdateMaxBatchSizeParam:
-    Type: Number
-    Description: max batch size for autoscaling rolling updates
-    Default: 1
-
   SpotBidPriceParam:
     Type: String
     Description: Optional spot instance bid price for AutoScaling EC2 (if UseSpotParam is enabled)
@@ -190,6 +185,21 @@ Parameters:
     Description: Max allocated instances in AutoScalingDown if scheduled
     Type: Number
     Default: 0
+
+  ScaleUpThresholdParam:
+    Description: cpu threshold for scaling up 
+    Type: Number
+    Default: 70
+
+  ScaleDownThresholdParam:
+    Description: cpu threshold for scaling down 
+    Type: Number
+    Default: 30
+
+  ScaleThresholdPeriodParam:
+    Description: period in minutes for checking the thresholds
+    Type: Number
+    Default: 3
 
 Mappings:
   RegionAmiMap:
@@ -279,13 +289,7 @@ Resources:
       Tags:
       - Key: Name
         Value:
-          Fn::Join:
-          - "-"
-          - - sg
-            - Ref: EnvParam
-            - Ref: ProductParam
-            - Ref: AppParam
-            - Ref: ProcessParam
+          Fn::Sub: sg-${EnvParam}-${ProductParam}-${AppParam}-${ProcessParam}
       - Key: Product
         Value:
           Ref: ProductParam
@@ -314,13 +318,7 @@ Resources:
       Tags:
       - Key: Name
         Value:
-          Fn::Join:
-          - "-"
-          - - sg
-            - Ref: EnvParam
-            - Ref: ProductParam
-            - Ref: AppParam
-            - Ref: ProcessParam
+          Fn::Sub: sg-${EnvParam}-${ProductParam}-${AppParam}-${ProcessParam}
       - Key: Product
         Value:
           Ref: ProductParam
@@ -376,13 +374,7 @@ Resources:
       Tags:
       - Key: Name
         Value:
-          Fn::Join:
-          - "-"
-          - - lb
-            - Ref: EnvParam
-            - Ref: ProductParam
-            - Ref: AppParam
-            - Ref: ProcessParam
+          Fn::Sub: lb-${EnvParam}-${ProductParam}-${AppParam}-${ProcessParam}
       - Key: Product
         Value:
           Ref: ProductParam
@@ -398,13 +390,15 @@ Resources:
   AppAlarmHigh:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmDescription: Scale-up if CPU > 70% for 5 minutes
+      AlarmDescription: Scale-up if CPU > ${ScaleUpThresholdParam}% for ${ScaleThresholdPeriodParam} minutes
       MetricName: CPUUtilization
       Namespace: AWS/EC2
       Statistic: Average
       Period: '60'
-      EvaluationPeriods: '5'
-      Threshold: '70'
+      EvaluationPeriods:
+        Ref: ScaleThresholdPeriodParam
+      Threshold:
+        Ref: ScaleUpThresholdParam
       AlarmActions:
       - Ref: AppScaleUpPolicy
       Dimensions:
@@ -416,13 +410,16 @@ Resources:
   AppAlarmLow:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmDescription: Scale-down if CPU < 30% for 5 minutes
+      AlarmDescription: 
+        Fn::Sub: Scale-down if CPU < ${ScaleDownThresholdParam}% for ${ScaleThresholdPeriodParam} minutes
       MetricName: CPUUtilization
       Namespace: AWS/EC2
       Statistic: Average
       Period: '60'
-      EvaluationPeriods: '5'
-      Threshold: '30'
+      EvaluationPeriods:
+        Ref: ScaleThresholdPeriodParam
+      Threshold:
+        Ref: ScaleDownThresholdParam
       AlarmActions:
       - Ref: AppScaleDownPolicy
       Dimensions:
@@ -457,15 +454,8 @@ Resources:
         Count:
           Ref: MinInstancesParam
     UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MinInstancesInService:
-          Ref: MinInstancesParam
-        MaxBatchSize:
-          Ref: RollingUpdateMaxBatchSizeParam
-        PauseTime: PT15M
-        WaitOnResourceSignals: 'true'
-        SuspendProcesses:
-        - ScheduledActions
+      AutoScalingReplacingUpdate:
+        WillReplace: 'true'
     Properties:
       LoadBalancerNames:
         Fn::If:
@@ -495,13 +485,7 @@ Resources:
       Tags:
       - Key: Name
         Value:
-          Fn::Join:
-          - "-"
-          - - Ref: EnvParam
-            - Ref: ProductParam
-            - Ref: AppParam
-            - Ref: ProcessParam
-            - Ref: ReleaseParam
+          Fn::Sub: ${EnvParam}-${ProductParam}-${AppParam}-${ProcessParam}-${ReleaseParam}
         PropagateAtLaunch: 'true'
       - Key: Product
         Value:
@@ -600,9 +584,9 @@ Resources:
       AutoScalingGroupName:
         Ref: AppAutoScalingGroup
       MaxSize:
-        !Ref MaxInstancesAutoScalingUpParam
+        Ref: MaxInstancesAutoScalingUpParam
       MinSize:
-        !Ref MinInstancesAutoScalingUpParam
+        Ref: MinInstancesAutoScalingUpParam
       Recurrence:
         Ref: AutoScalingGroupScheduleUpParam
   
@@ -613,9 +597,9 @@ Resources:
       AutoScalingGroupName:
         Ref: AppAutoScalingGroup
       MaxSize:
-        !Ref MaxInstancesAutoScalingDownParam
+        Ref: MaxInstancesAutoScalingDownParam
       MinSize:
-        !Ref MinInstancesAutoScalingDownParam
+        Ref: MinInstancesAutoScalingDownParam
       Recurrence:
         Ref: AutoScalingGroupScheduleDownParam
 
