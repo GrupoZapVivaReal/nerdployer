@@ -12,5 +12,5 @@ class AwsCliStep(BaseStep):
     def execute(self, context, params):
         region = utils.fallback([params['region'], self.config['region'], 'us-east-1'])
         command = ['aws', params['service'], params['command']] + params.get('arguments', []) + ['--region', region, '--output', 'json']
-        ouput = subprocess.check_output(command).decode("utf-8").strip()
+        ouput = subprocess.check_output(command).decode("utf-8").strip() or '{}'
         return json.loads(ouput)
