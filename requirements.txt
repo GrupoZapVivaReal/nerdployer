@@ -1,7 +1,7 @@
-docker-py
-boto3
-jinja2
-dnspython
-requests
-awscli
-pyyaml
+docker-py==1.10.6
+boto3==1.4.4
+Jinja2==2.9.6
+dnspython==1.15.0
+requests==2.13.0
+awscli==1.11.80
+PyYAML==3.12
