@@ -6,3 +6,4 @@ nerdployer.egg-info
 setup.cfg
 build/
 temp/
+dist/

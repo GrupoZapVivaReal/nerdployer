@@ -14,7 +14,11 @@ setup_options = dict(
     description='nerdployer command line',
     author='VivaReal',
     url='http://www.vivareal.com.br',
-    scripts=['bin/nerdployer'],
+    entry_points={
+        'console_scripts': [
+            'nerdployer = nerdployer.__main__:main'
+        ]
+    },
     packages=find_packages(),
     package_data={'nerdployer': ['steps/templates/*']},
     install_requires=requires,

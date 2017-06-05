@@ -1,4 +1,3 @@
-
 import argparse
 import os
 from nerdployer.flow import NerdFlow
@@ -30,7 +29,7 @@ def main():
     if not os.path.exists(args.nerdfile):
         parser.error('please provide a nerdfile')
 
-    _run(args.nerdfile, _initialize_context(args.context))	
+    _run(args.nerdfile, _initialize_context(args.context))
 
 
 if __name__ == '__main__':
