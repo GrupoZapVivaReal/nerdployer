@@ -204,9 +204,9 @@ Parameters:
 Mappings:
   RegionAmiMap:
     sa-east-1:
-      ami: ami-04bbd968
+      ami: ami-40b3d82c
     us-east-1:
-      ami: ami-24f16432
+      ami: ami-5e94bb48
 
 Conditions:
   ApiCondition:
