@@ -1,7 +1,0 @@
-#!/usr/bin/env python3
-
-from nerdployer import __main__ as nerdployer
-
-
-if __name__ == '__main__':
-    nerdployer.main()
