@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class Docker(object):
 
     def __init__(self):
-        self._client = docker.from_env()
+        self._client = docker.from_env(version='auto')
 
     def build_and_push(self, repository, tag, path):
         logger.info('starting image building: {}:{} in {}'.format(repository, tag, path))
