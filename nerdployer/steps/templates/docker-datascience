@@ -108,6 +108,7 @@ Parameters:
     Type: String
     Description: Additional docker environment variables
     Default: '#my docker env file content'
+    NoEcho: true
   
   KeyPairNameParam:
     Type: AWS::EC2::KeyPair::KeyName
