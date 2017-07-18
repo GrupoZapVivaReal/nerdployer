@@ -1,6 +1,5 @@
 import logging
-import json
-from docker import Client
+import docker
 
 logger = logging.getLogger(__name__)
 
@@ -8,17 +7,13 @@ logger = logging.getLogger(__name__)
 class Docker(object):
 
     def __init__(self):
-        self._client = Client(version='auto')
+        self._client = docker.from_env()
 
     def build_and_push(self, repository, tag, path):
-        self._log_stream('building', self._client.build(tag=repository + ':' + tag, path=path, stream=True))
-        self._log_stream('pushing', self._client.push(repository=repository, tag=tag, stream=True))
-
-    def _log_stream(self, phase, stream):
-        for output in stream:
-            try:
-                output = json.loads(output.decode('utf-8'))
-            except:
-                pass
-
-            logger.debug('%s --> %s', phase, output)
+        logger.info('starting image building: {}:{} in {}'.format(repository, tag, path))
+        self._client.images.build(tag='{}:{}'.format(repository, tag), path=path)
+        logger.info('done image building: {}:{} in {}'.format(repository, tag, path))
+        logger.info('starting image pushing: {}:{} in {}'.format(repository, tag, path))
+        output = self._client.images.push(repository=repository, tag=tag)
+        logger.info('done image pushing: {}:{} in {}'.format(repository, tag, path))
+        logger.debug('image pushing output {}:{} - {}'.format(repository, tag, output))
