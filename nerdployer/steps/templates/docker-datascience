@@ -202,6 +202,11 @@ Parameters:
     Type: Number
     Default: 3
 
+  ApiDnsRecordWeightParam:
+    Description: default weight for the created api DNS
+    Type: Number
+    Default: 1
+
 Mappings:
   RegionAmiMap:
     sa-east-1:
@@ -615,6 +620,10 @@ Resources:
       Name:
         Fn::Sub: ${ApiDnsParam}.${HostedZoneNameParam}
       Type: A
+      Weight:
+        Ref: ApiDnsRecordWeightParam
+      SetIdentifier:
+        Fn::Sub: ${AWS::Region}-${AWS::StackName}
       AliasTarget:
         HostedZoneId:
           Fn::GetAtt:
