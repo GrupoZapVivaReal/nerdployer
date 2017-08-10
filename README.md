@@ -13,7 +13,8 @@ First create an alias that will automagically pull the nerdployer docker image a
 
 ```nerdployer --nerdfile my_nerdfile --context somevar1=somevalue1 somevar2=somevalue2```
 
-* some of the supported steps maybe not work properly using the docker image.
+* some of the supported steps may not work properly using the docker image
+** currently, the docker image is only available in our private repository
 
 ### Hard way
 
@@ -54,9 +55,9 @@ and run:
 
 ## How it works
 
-At the startup, nerdployer engine looks for a YAML or a JSON file (a.k.a. *nerdfile*) with the deployment flow described and creates an *empty context. The nerdfile is a simple template file that is rendered after each step execution by a jinja2 engine. At each step executed, the result is persisted in the context for a future use.
+At the startup, nerdployer engine looks for a YAML or a JSON file (a.k.a. *nerdfile*) with the deployment flow described and creates an *empty context. The nerdfile is a simple template file that is rendered after each step execution by a jinja2 engine. At the end each step executed, the result is persisted in the context for a future use.
 
-*you can setup the initial context variables when you fire the nerdployer tool with the context argument
+*you can setup initial context variables when you fire the nerdployer tool with the context argument
 
 ```--context var1=args1 var2=args2```
 
@@ -79,7 +80,7 @@ The second section is named *flow* where you can configure your deployment flow 
 
 #### Failure Section
 
-The third and last section is called **failure**. It follows the same scheme of the *flow* section (can have multiple steps), but is invoked only when a exception occurs. Here you can access a special context variable named **error**.
+The third and last section is called **failure**. It follows the same schema of the *flow* section (can have multiple steps), but is invoked only when an exception occurs. Here you can access a special context variable named **error**.
 
 
 Have fun :)
