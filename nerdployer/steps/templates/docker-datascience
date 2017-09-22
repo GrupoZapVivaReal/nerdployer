@@ -3,26 +3,26 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Parameters:
   AppParam:
-    Description: App's name
+    Description: app's name
     Type: String
   
   ProductParam:
-    Description: Team's name
+    Description: team's name
     Type: String
     Default: 'datascience'
   
   EnvParam:
-    Description: Environment's name
+    Description: environment's name
     Default: dev
     Type: String
     AllowedPattern: "(prod|qa|dev|ci)"
   
   ReleaseParam:
-    Description: Release's name
+    Description: release's name
     Type: String
   
   ProcessParam:
-    Description: Process's name
+    Description: process's name
     Default: api
     AllowedPattern: "(api|worker)"
     Type: String
@@ -34,27 +34,27 @@ Parameters:
   AllowedNetworkCIDRParam:
     Type: String
     Default: 10.0.0.0/8
-    Description: Network CIDR that have access to the created instances
+    Description: network CIDR that have access to the created instances
   
   AZsParam:
     Type: List<AWS::EC2::AvailabilityZone::Name>
-    Description: AZs used in this stack
+    Description: azs used in this stack
   
   ELBSubnetIDListParam:
     Type: List<AWS::EC2::Subnet::Id>
-    Description: List of subnet ids for the elb layer
+    Description: list of subnet ids for the elb layer
   
   AppSubnetIDListParam:
     Type: List<AWS::EC2::Subnet::Id>
-    Description: List of subnet ids for the app layer
+    Description: list of subnet ids for the app layer
  
   MinInstancesParam:
-    Description: Minimum initial allocated instances for this application (permanent if not scheduled action is disabled)
+    Description: minimum number of instances for this application
     Type: Number
     Default: 1
   
   MaxInstancesParam:
-    Description: Maximum initial allocated instances for this application (permanent if not scheduled action is disabled)
+    Description: maximum number of instances for this application
     Type: Number
     Default: 2
   
@@ -102,36 +102,41 @@ Parameters:
   
   DockerImageParam:
     Type: String
-    Description: Docker image that will be pulled
+    Description: docker image that will be pulled
+
+  DockerCommandParam:
+    Type: String
+    Description: docker command to be executed
+    Default: ''
   
   DockerEnvironmentVariablesParam:
     Type: String
-    Description: Additional docker environment variables
+    Description: additional docker environment variables
     Default: '#my docker env file content'
     NoEcho: true
   
   KeyPairNameParam:
     Type: AWS::EC2::KeyPair::KeyName
-    Description: KeyPair that will be used
+    Description: keypair that will be used
   
   DockerPortParam:
     Type: Number
-    Description: Port exposed in the docker image
+    Description: port exposed in the docker image
     Default: 8080
   
   HealthCheckParam:
     Type: String
-    Description: Health check protocol
+    Description: health check protocol
     Default: TCP:8080
   
   DockerMaxFileLogParam:
     Type: Number
-    Description: Maximum number of log files created by the container
+    Description: maximum number of log files created by the container
     Default: 2
   
   DockerMaxSizeLogParam:
     Type: String
-    Description: Maximum size of the log files created by the container
+    Description: maximum size of the log files created by the container
     Default: 1g
   
   AutoScalingGroupScheduleUpParam:
@@ -164,26 +169,26 @@ Parameters:
 
   SpotBidPriceParam:
     Type: String
-    Description: Optional spot instance bid price for AutoScaling EC2 (if UseSpotParam is enabled)
+    Description: optional spot bid price for asg
     Default: ''
 
   MinInstancesAutoScalingUpParam:
-    Description: Min allocated instances in AutoScalingUp if scheduled
+    Description: min allocated instances for scheduled up action
     Type: Number
     Default: 0
 
   MaxInstancesAutoScalingUpParam:
-    Description: Max allocated instances in AutoScalingUp if scheduled
+    Description: max allocated instances for scheduled up action
     Type: Number
     Default: 0
 
   MinInstancesAutoScalingDownParam:
-    Description: Min allocated instances in AutoScalingDown if scheduled
+    Description: min allocated instances for scheduled down action
     Type: Number
     Default: 0
 
   MaxInstancesAutoScalingDownParam:
-    Description: Max allocated instances in AutoScalingDown if scheduled
+    Description: max allocated instances for scheduled down action
     Type: Number
     Default: 0
 
@@ -229,7 +234,6 @@ Conditions:
       - Ref: AutoScalingGroupScheduledActionEnabledParam
 
 Resources:
-
   AppRole:
     Type: AWS::IAM::Role
     Properties:
@@ -252,6 +256,7 @@ Resources:
             - s3:*
             - sqs:*
             - sns:*
+            - kinesis:*
             - elasticmapreduce:*
             - elasticloadbalancing:Describe*
             - iam:CreateRole
@@ -538,7 +543,7 @@ Resources:
                   --network=host
                   --log-opt max-size=${DockerMaxSizeLogParam}
                   --log-opt max-file=${DockerMaxFileLogParam}
-                  -p 8080:${DockerPortParam} ${DockerImageParam}
+                  -p 8080:${DockerPortParam} ${DockerImageParam} ${DockerCommandParam}
         healthcheck:
           files:
             "/opt/docker/healthcheck":
