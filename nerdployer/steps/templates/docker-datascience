@@ -488,7 +488,6 @@ Resources:
       VPCZoneIdentifier:
         Ref: AppSubnetIDListParam
       TerminationPolicies:
-      - ClosestToNextInstanceHour
       - OldestInstance
       - Default
       Tags:
