@@ -4,4 +4,4 @@ Jinja2==2.9.6
 dnspython==1.15.0
 requests==2.18.4
 PyYAML==3.12
-awscli==1.11.158
+awscli==1.11.176
