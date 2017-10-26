@@ -17,4 +17,7 @@ class K8sStep(BaseStep):
         full_mappings = {**context_mappings, **parameters_mappings}
         template = utils.render_template(params['template'], full_mappings)
         apply_command = 'cat <<EOF | kubectl --server={server} --token={token} {opts} apply -f -\n{template}\nEOF'.format(server=server, token=token, template=template, opts=opts)
-        return subprocess.check_output([apply_command], shell=True).decode('utf-8').strip()
+        try:
+            return subprocess.check_output([apply_command], shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip()
+        except subprocess.CalledProcessError as e:
+            raise Exception(e.output.decode('utf-8').strip().replace('\n', ' - '))
