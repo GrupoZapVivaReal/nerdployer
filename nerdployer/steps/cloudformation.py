@@ -39,8 +39,9 @@ class CloudformationStep(BaseStep):
         else:
             template_path = template_definition['external']
 
-        template = utils.render_template(template_path, template_definition.get('mappings', context))
-        parameters = utils.parse_content(utils.render_template(template_definition['parameters'], template_definition.get('mappings', context)))
+        mappings = {**context, **template_definition.get('mappings', {})}
+        template = utils.render_template(template_path, mappings)
+        parameters = utils.parse_content(utils.render_template(template_definition['parameters'], mappings))
 
         if not client.get_stack(stack):
             create_or_update = client.create_stack

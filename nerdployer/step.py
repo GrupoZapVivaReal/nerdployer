@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+
 class BaseStep(object):
     def __init__(self, type, config):
         self.type = type
