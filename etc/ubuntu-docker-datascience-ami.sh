@@ -15,7 +15,7 @@ apt-get install linux-aws -y
 
 ## cfn and aws support
 apt-get -y install python-setuptools python-pystache python-pip libffi-dev libssl-dev
-pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
+pip install -U `pip list --format=legacy --outdated | awk '{print $1}'`
 pip install pyopenssl ndg-httpsclient pyasn1 boto pystache
 pip install awscli
 easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
