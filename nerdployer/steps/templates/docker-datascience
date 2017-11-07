@@ -77,6 +77,12 @@ Parameters:
     - m4.4xlarge
     - m4.10xlarge
     - m4.16xlarge
+    - c5.large
+    - c5.xlarge
+    - c5.2xlarge
+    - c5.4xlarge
+    - c5.9xlarge
+    - c5.18xlarge
     - c4.large
     - c4.xlarge
     - c4.2xlarge
@@ -215,7 +221,7 @@ Parameters:
 Mappings:
   RegionAmiMap:
     us-east-1:
-      ami: ami-5b0e2620
+      ami: ami-b8bd0ec2
 
 Conditions:
   ApiCondition:
