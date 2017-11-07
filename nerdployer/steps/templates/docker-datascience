@@ -556,11 +556,11 @@ Resources:
                 Fn::If:
                 - ApiCondition
                 - Fn::Sub: |
-                    #!/bin/bash -xe
+                    #!/bin/bash
                     state="\"UnknownStatus\""
                     instance_id=$(/usr/bin/curl -s http://169.254.169.254/latest/meta-data/instance-id)
                     until [ "$state" == "\"InService\"" ]; do
-                      state=$(/usr/local/bin/aws elb describe-instance-health --load-balancer-name ${AppLoadBalancer} --region ${AWS::Region} --instances $instance_id --query InstanceStates[0].State);
+                      state=$(/usr/local/bin/aws elb describe-instance-health --load-balancer-name ${AppLoadBalancer} --region ${AWS::Region} --instances $instance_id --query 'InstanceStates[0].State');
                       sleep 10;
                     done
                 - Ref: "AWS::NoValue"
