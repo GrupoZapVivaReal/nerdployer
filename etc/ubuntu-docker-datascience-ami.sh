@@ -29,7 +29,7 @@ docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 groupadd docker ; usermod -aG docker ubuntu
 
 ## clear and reboot
-apt-get autoremove
+apt-get autoremove; apt-get autoclean
 shred -u /etc/ssh/*_key /etc/ssh/*_key.pub
 shred -u ~/.*history
 reboot
