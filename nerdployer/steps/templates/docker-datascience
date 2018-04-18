@@ -15,7 +15,7 @@ Parameters:
     Description: environment's name
     Default: dev
     Type: String
-    AllowedPattern: "(prod|qa|dev|ci)"
+    AllowedPattern: "(prod|qa|dev|ci|staging)"
   
   ReleaseParam:
     Description: release's name
