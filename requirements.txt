@@ -1,8 +1,8 @@
-docker==2.5.1
-boto3==1.4.7
-botocore==1.7.40
-Jinja2==2.9.6
+docker==3.5.0
+boto3==1.9.4
+botocore==1.12.4
+Jinja2==2.10
 dnspython==1.15.0
-requests==2.18.4
-PyYAML==3.12
-awscli==1.11.182
+requests==2.19.1
+PyYAML==3.13
+awscli==1.16.14
