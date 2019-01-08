@@ -18,7 +18,7 @@ apt-get -y install python-setuptools python-pystache python-pip libffi-dev libss
 pip install -U `pip list --format=legacy --outdated | awk '{print $1}'`
 pip install pyopenssl ndg-httpsclient pyasn1 boto pystache
 pip install awscli
-easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
 
 ## docker support
 apt-get install apt-transport-https ca-certificates curl software-properties-common -y
