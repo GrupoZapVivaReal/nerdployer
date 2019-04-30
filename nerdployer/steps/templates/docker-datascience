@@ -235,7 +235,7 @@ Parameters:
 Mappings:
   RegionAmiMap:
     us-east-1:
-      ami: ami-03e99fcd9ddd43126
+      ami: ami-09f50f929a52acfd5
 
 Conditions:
   ApiCondition:
