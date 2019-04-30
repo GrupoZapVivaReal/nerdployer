@@ -4,5 +4,5 @@ botocore==1.12.139
 Jinja2==2.10.1
 dnspython==1.15.0
 requests==2.21.0
-PyYAML==5.1
+PyYAML==3.13
 awscli==1.16.148
