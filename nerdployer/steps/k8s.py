@@ -8,15 +8,14 @@ class K8sStep(BaseStep):
         super().__init__('k8s', config)
 
     def execute(self, context, params):
-        k8s = K8s(self.config)
+        k8s = K8s(self.config['server'], self.config['token'], self.config['namespace'] or '',
+                  self.config['opts'] or '')
         operation = params.get('operation', 'apply')
 
         if 'apply' in operation:
-            result = k8s.apply(self.config['server'], self.config['token'], self._prepare_template(context, params),
-                               self.config['opts'] or '', self.config['namespace'] or '')
+            result = k8s.apply(self._prepare_template(context, params))
         if 'rollout_status' in operation:
-            result = k8s.rollout_status(self.config['server'], self.config['token'], params['deployment'],
-                                        self.config['namespace'] or '')
+            result = k8s.rollout_status(params['deployment'])
 
         return result
 
