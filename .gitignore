@@ -7,3 +7,4 @@ setup.cfg
 build/
 temp/
 dist/
+.idea/
