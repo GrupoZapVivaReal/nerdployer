@@ -21,7 +21,8 @@ class K8sStep(BaseStep):
 
     def _prepare_template(self, context, params):
         context_mappings = {**context, **params.get('mappings', {})}
-        parameters_mappings = utils.parse_content(utils.render_template(params['parameters'], context_mappings)) if \
-            params['parameters'] else {}
+        parameters_mappings = utils.parse_content(
+            utils.render_template(params['parameters'], context_mappings)) \
+            if params['parameters'] else {}
         full_mappings = {**context_mappings, **parameters_mappings}
         return utils.render_template(params['template'], full_mappings)
