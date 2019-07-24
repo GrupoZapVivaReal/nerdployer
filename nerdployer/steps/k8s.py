@@ -12,10 +12,12 @@ class K8sStep(BaseStep):
                   self.config['opts'] or '')
         operation = params.get('operation', 'apply')
 
-        if 'apply' in operation:
+        if operation == 'apply':
             result = k8s.apply(self._prepare_template(context, params))
-        if 'rollout_status' in operation:
+        elif operation == 'rollout_status':
             result = k8s.rollout_status(params['deployment'])
+        else:
+            raise ValueError('invalid operation')
 
         return result
 
