@@ -8,7 +8,7 @@ class K8sStep(BaseStep):
         super().__init__('k8s', config)
 
     def execute(self, context, params):
-        k8s = K8s(self.config['server'], self.config['token'], self.config['namespace'] or '',
+        k8s = K8s(self.config['server'], self.config['token'], self.config['namespace'],
                   self.config['opts'] or '')
         operation = params.get('operation', 'apply')
 

@@ -11,7 +11,7 @@ class K8s(object):
                                                          opts=opts)
 
     def apply(self, template):
-        apply_command = 'cat <<EOF | {base_cmd} --record' \
+        apply_command = 'cat <<EOF | {base_cmd} --record --validate=false ' \
                         'apply -f -\n{template}\nEOF'.format(
             template=template, base_cmd=self.base_cmd)
         return self._run_sub_process(apply_command)
