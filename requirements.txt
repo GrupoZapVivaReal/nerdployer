@@ -1,6 +1,7 @@
 docker==3.7.3
 boto3==1.10.9
 botocore==1.13.9
+MarkupSafe==1.1.1
 Jinja2==2.10.3
 dnspython==1.15.0
 requests==2.22.0
