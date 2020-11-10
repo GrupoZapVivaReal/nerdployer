@@ -9,6 +9,7 @@ jobs:
   build_and_push:
     <<: *defaults
     steps:
+      - checkout
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - run: docker build -t vivareal/nerdployer:$CIRCLE_SHA1 .
       - run: docker tag vivareal/nerdployer:$CIRCLE_SHA1 vivareal/nerdployer:latest
