@@ -1,0 +1,27 @@
+version: 2.1
+
+defaults: &defaults
+  machine: true
+  working_directory: ~/nerdployer
+
+jobs:
+
+  build_and_push:
+    <<: *defaults
+    steps:
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - run: docker build -t vivareal/nerdployer:$CIRCLE_SHA1 .
+      - run: docker tag vivareal/nerdployer:$CIRCLE_SHA1 vivareal/nerdployer:latest
+      - run: docker push vivareal/nerdployer:$CIRCLE_SHA1
+      - run: docker push vivareal/nerdployer:latest
+
+
+workflows:
+  version: 2
+  build-and-push:
+    jobs:
+      - build_and_push:
+          context: build-context
+          filters:
+            branches:
+              only: master
