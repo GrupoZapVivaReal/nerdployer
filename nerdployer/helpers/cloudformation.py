@@ -8,13 +8,13 @@ class Cloudformation(object):
         self._client = boto3.client('cloudformation', region_name=region)
 
     def create_stack(self, stack, template, parameters, tags=[]):
-        create_result = self._client.create_stack(StackName=stack, TemplateBody=template, Parameters=parameters, Tags=tags, Capabilities=['CAPABILITY_IAM'], OnFailure='DELETE')
+        create_result = self._client.create_stack(StackName=stack, TemplateBody=template, Parameters=parameters, Tags=tags, Capabilities=['CAPABILITY_AUTO_EXPAND'], OnFailure='DELETE')
         self._wait_for(create_result['StackId'], 'stack_create_complete')
         return self.get_stack(create_result['StackId'])
 
     def update_stack(self, stack, template, parameters, tags=[]):
         try:
-            update_result = self._client.update_stack(StackName=stack, TemplateBody=template, Parameters=parameters, Tags=tags, Capabilities=['CAPABILITY_IAM'])
+            update_result = self._client.update_stack(StackName=stack, TemplateBody=template, Parameters=parameters, Tags=tags, Capabilities=['CAPABILITY_AUTO_EXPAND'])
             self._wait_for(update_result['StackId'], 'stack_update_complete')
         except ClientError as e:
             if not (e.response['Error']['Code'] == 'ValidationError' and 'No updates are to be performed' in e.response['Error']['Message']):
